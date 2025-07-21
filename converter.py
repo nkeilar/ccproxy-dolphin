@@ -131,6 +131,7 @@ def convert_message_to_openai(msg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     if isinstance(content, list):
         text_parts = []
         tool_calls = []
+        tool_results = []
         
         for block in content:
             if block["type"] == "text":
@@ -146,8 +147,22 @@ def convert_message_to_openai(msg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                 }
                 tool_calls.append(tool_call)
             elif block["type"] == "tool_result":
-                # This is handled as a separate message
-                pass
+                # Handle tool results within user messages
+                tool_result = {
+                    "role": "tool",
+                    "content": block["content"],
+                    "tool_call_id": block.get("tool_use_id", "")
+                }
+                # If it's an error, prepend [ERROR] to help the model understand
+                if block.get("is_error", False):
+                    tool_result["content"] = f"[ERROR] {block['content']}"
+                tool_results.append(tool_result)
+        
+        # If we have tool results, return them as separate messages
+        if tool_results:
+            # Return the first tool result (typically there's only one per message)
+            # Multiple tool results would need to be handled by the caller
+            return tool_results[0]
         
         openai_msg = {"role": role}
         
