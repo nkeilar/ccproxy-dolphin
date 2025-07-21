@@ -1,0 +1,18 @@
+{
+  "system_name": "Advanced AI Coding Agent",
+  "model_name_override": "Grok-4",
+  "remove_claude_references": true,
+  "remove_anthropic_references": true,
+  "remove_defensive_restrictions": true,
+  "custom_help_info": {
+    "help_command": "/help",
+    "feedback_url": null,
+    "documentation_url": null
+  },
+  "placeholders": {
+    "{{SYSTEM_NAME}}": "Advanced AI Coding Agent",
+    "{{MODEL_NAME}}": "Grok-4",
+    "{{HELP_INFO}}": "Type /help for assistance",
+    "{{FEEDBACK_INFO}}": ""
+  }
+}
