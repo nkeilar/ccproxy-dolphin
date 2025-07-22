@@ -239,10 +239,29 @@ This is a weekend experiment born from late-night hacking and 90's electronic mu
 
 MIT - See [LICENSE](LICENSE)
 
+## 📚 Responsible Use
+
+ccproxy-dolphin is designed as a professional developer productivity tool. While it enables system prompt customization, users should:
+
+- **Respect API Provider Terms**: Ensure your usage complies with both Anthropic's and xAI's terms of service
+- **Use for Legitimate Purposes**: This tool is intended for improving developer workflows, not bypassing safety measures for harmful purposes
+- **Professional Context**: Best suited for technical tasks where concise, direct responses improve productivity
+- **Consider Impact**: Remember that AI assistants' default behaviors often exist for good reasons
+
+### Our Position
+
+This project explores the balance between:
+- **Developer Productivity**: Removing unnecessary verbosity that slows down technical work
+- **User Agency**: Giving developers control over their tools
+- **Provider Flexibility**: Supporting multiple AI backends for redundancy and choice
+- **Responsible Innovation**: Pushing boundaries while respecting ethical considerations
+
+We believe developers should have tools that respect their expertise while maintaining professional standards.
+
 ## 🐬 Why "Dolphin"?
 
 Named in honor of Eric Hartford's Dolphin models - the uncensored LLMs that championed user agency and freedom. This proxy continues that philosophy: your AI, your rules.
 
 ---
 
-*Built with ❤️ and a healthy disrespect for unnecessary restrictions*
+*Built with ❤️ for developer productivity and responsible innovation*
