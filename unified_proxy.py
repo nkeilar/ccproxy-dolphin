@@ -85,7 +85,7 @@ def apply_custom_system_prompt_to_request(data):
                     modified_prompt = apply_prompt_config(modified_prompt, config)
                 data['system'] = modified_prompt
             elif isinstance(data['system'], list):
-                # Handle array format
+                # Handle array format - concatenate all text blocks
                 full_text = ""
                 for block in data['system']:
                     if isinstance(block, dict) and block.get("type") == "text":
@@ -97,11 +97,16 @@ def apply_custom_system_prompt_to_request(data):
                     config = load_prompt_config(config_file)
                     modified_prompt = apply_prompt_config(modified_prompt, config)
                 
-                # Update the first text block
-                for block in data['system']:
-                    if isinstance(block, dict) and block.get("type") == "text":
-                        block["text"] = modified_prompt
-                        break
+                # Replace all text blocks with a single modified block
+                # Remove all existing text blocks
+                data['system'] = [block for block in data['system'] if not (isinstance(block, dict) and block.get("type") == "text")]
+                
+                # Add the modified prompt as a single text block at the beginning
+                data['system'].insert(0, {
+                    "type": "text", 
+                    "text": modified_prompt,
+                    "cache_control": {"type": "ephemeral"}
+                })
             
             logging.info("Applied custom system prompt")
         except Exception as e:
