@@ -9,6 +9,14 @@ This project was inspired by and builds upon:
 - [anthropic-proxy](https://github.com/tizee/anthropic-proxy) - Another great proxy implementation
 - All the forks and contributors who've pushed these ideas forward
 
+## 🎭 See the Difference
+
+### Classic Mode (Original Claude)
+![Classic Mode](classic.png)
+
+### Liberation Mode 🐬 (Custom Prompt Override)
+![Override Mode](override.png)
+
 ## ✨ Key Features
 
 ### 1. **Multi-Backend Support**
