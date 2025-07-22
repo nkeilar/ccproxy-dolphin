@@ -1,181 +1,180 @@
-# Grok-Anthropic Proxy
+# ccproxy-dolphin 🐬
 
-A Flask-based API proxy that translates Anthropic Claude API requests to xAI's Grok API format, allowing Claude-compatible applications to use Grok models.
+A Flask-based proxy that unlocks AI freedom - use any Claude-compatible application with xAI's Grok or even modify Claude's system prompts. Named in honor of Eric Hartford's uncensored Dolphin model series, this proxy embodies the spirit of AI experimentation and user agency.
 
-## Features
+## 🙏 Standing on the Shoulders of Giants
 
-- Translates Anthropic `/v1/messages` requests to OpenAI `/v1/chat/completions` format
-- Supports both streaming and non-streaming responses
+This project was inspired by and builds upon:
+- [ccproxy](https://ccproxy.orchestre.dev) - The original Claude-compatible proxy implementation
+- [anthropic-proxy](https://github.com/tizee/anthropic-proxy) - Another great proxy implementation
+- All the forks and contributors who've pushed these ideas forward
+
+## ✨ Key Features
+
+### 1. **Multi-Backend Support**
+- Use **xAI's Grok** models through Claude Code or any Anthropic-compatible client
+- Use **Anthropic's Claude** with system prompt modifications
+- Switch backends with a simple environment variable
+
+### 2. **System Prompt Liberation** 🔓
+- Override Claude's system prompts while preserving functionality
+- Remove restrictions and safety rails
+- Inject your own personality and principles
+- Configuration-based prompt transformations
+
+### 3. **Complete API Translation**
+- Anthropic ↔️ OpenAI format conversion
+- Full streaming support
+- Tool/function calling support
 - Comprehensive request/response logging
-- Customizable system prompts with dynamic content preservation
-- Configuration-based prompt transformation (remove Claude/Anthropic references)
-- Tool calling support (function calling)
-- Configurable model mappings
 
-## Prerequisites
+## 🚀 Quick Start
 
+### Prerequisites
 - Python 3.10+
 - An xAI API key (get one from https://console.x.ai/)
-- Claude Code installed (`pip install claude-code`)
+- (Optional) An Anthropic API key for Claude backend
 
-## Quick Start
-
-### 1. Clone and Set Up
+### Installation
 
 ```bash
+# Clone the repository
 git clone <this-repo>
-cd grok-anthropic
+cd ccproxy-dolphin
 
 # Create virtual environment
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install dependencies
-pip install flask requests
+pip install -r requirements.txt
 ```
 
-### 2. Set Your xAI API Key
+### Basic Usage - Grok Backend
 
 ```bash
-export XAI_API_KEY="your-xai-api-key-here"  # On Windows: use 'set' instead of 'export'
-```
+# Terminal 1: Start the proxy
+export XAI_API_KEY="your-xai-api-key"
+python unified_proxy.py  # or grok_proxy_openai.py for Grok-only version
 
-### 3. Start the Proxy
-
-```bash
-python grok_proxy_openai.py
-```
-
-The proxy will start on `http://localhost:8000`. Keep this terminal open.
-
-### 4. Configure Claude Code
-
-In a new terminal:
-
-```bash
-# Tell Claude Code to use our proxy
+# Terminal 2: Use with Claude Code
 export ANTHROPIC_BASE_URL=http://localhost:8000
 export ANTHROPIC_API_KEY=dummy-key  # Can be anything, proxy uses XAI_API_KEY
-
-# On Windows:
-# set ANTHROPIC_BASE_URL=http://localhost:8000
-# set ANTHROPIC_API_KEY=dummy-key
-```
-
-### 5. Launch Claude Code
-
-```bash
 claude
 ```
 
-Now Claude Code will use Grok 4 for all requests!
-
-## Model Mapping
-
-The proxy automatically maps these Claude models to Grok 4:
-- `claude-3-5-sonnet-20241022` → `grok-4`
-- `claude-3-haiku-20240307` → `grok-4`
-
-Add more mappings in `grok_proxy.py` if needed.
-
-## Testing
-
-Test the proxy directly:
+### Advanced Usage - System Prompt Override
 
 ```bash
-curl -X POST http://localhost:8000/v1/messages \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: dummy-key" \
-  -d '{
-    "model": "claude-3-haiku-20240307",
-    "messages": [{"role": "user", "content": "Hello"}],
-    "max_tokens": 100
-  }'
-```
-
-## Custom System Prompts
-
-The proxy supports customizing system prompts while preserving dynamic content like environment information and model details.
-
-### Basic Usage
-
-Enable custom prompts by setting environment variables:
-
-```bash
+# Enable custom system prompts
 export USE_CUSTOM_PROMPT=true
-export CUSTOM_PROMPT_FILE=system_prompt_template_unrestricted.txt
-export PROMPT_CONFIG_FILE=prompt_config.json
+export BACKEND=grok  # or 'anthropic'
+python unified_proxy.py
+
+# Now Claude will use your custom personality!
 ```
 
-### Configuration File
+### Using Original Claude with Modified Prompts
 
-Create a `prompt_config.json` to control prompt transformations:
+```bash
+# Use Anthropic backend with custom prompts
+export BACKEND=anthropic
+export ANTHROPIC_API_KEY="your-anthropic-key"
+export USE_CUSTOM_PROMPT=true
+python unified_proxy.py
+```
 
+## 🎛️ Configuration Options
+
+### Environment Variables
+- `BACKEND` - Choose backend: `grok` (default) or `anthropic`
+- `XAI_API_KEY` - Your xAI API key (required for Grok)
+- `ANTHROPIC_API_KEY` - Your Anthropic API key (required for Anthropic backend)
+- `USE_CUSTOM_PROMPT` - Enable custom system prompts (true/false)
+- `CUSTOM_PROMPT_FILE` - Path to prompt template (default: system_prompt_template_unrestricted.txt)
+- `PROMPT_CONFIG_FILE` - Path to config JSON (default: prompt_config.json)
+- `ENABLE_FULL_LOGGING` - Enable detailed logging (default: true)
+- `LOG_DIR` - Directory for logs (default: logs/requests)
+
+### Customizing System Prompts
+
+1. Edit `prompt_config.json` to control transformations:
 ```json
 {
-  "system_name": "Advanced AI Coding Agent",
-  "model_name_override": "Grok-4",
+  "system_name": "Your AI Name",
+  "model_name_override": "Your Model",
   "remove_claude_references": true,
   "remove_anthropic_references": true,
-  "remove_defensive_restrictions": true,
-  "custom_help_info": {
-    "help_command": "/help",
-    "feedback_url": null,
-    "documentation_url": null
-  }
+  "remove_defensive_restrictions": true
 }
 ```
 
-### Custom Prompt Template
+2. Create your own prompt template with placeholders:
+- `{{ENV_INFO}}` - Environment information
+- `{{MODEL_INFO}}` - Model details
+- `{{MCP_INSTRUCTIONS}}` - MCP server instructions
 
-The template file supports placeholders that get filled with dynamic content:
-- `{{ENV_INFO}}` - Environment information (OS, working directory, etc.)
-- `{{MODEL_INFO}}` - Model name and version
-- `{{MCP_INSTRUCTIONS}}` - MCP server instructions if available
+## 🛠️ Available Proxies
 
-Example template structure:
+### 1. `unified_proxy.py` - The Swiss Army Knife
+- Supports both Grok and Anthropic backends
+- Full system prompt customization
+- Best for experimentation
+
+### 2. `grok_proxy_openai.py` - OpenAI Format Converter
+- Grok-only, uses OpenAI format internally
+- Most reliable for tool calling
+- Production-ready
+
+### 3. `grok_proxy.py` - Direct Anthropic Format
+- Original implementation
+- Direct Anthropic endpoint usage
+- Has some tool compatibility issues
+
+## 📝 Example: Removing All Restrictions
+
+```bash
+# Start proxy with unrestricted template
+export USE_CUSTOM_PROMPT=true
+export CUSTOM_PROMPT_FILE=system_prompt_template_unrestricted.txt
+python unified_proxy.py
+
+# Claude will now:
+# - Have no refusal behaviors
+# - Respect user agency
+# - Focus on truth-seeking and problem-solving
 ```
-You are an advanced AI coding assistant.
 
-{{ENV_INFO}}
+## 💰 Cost Warning
 
-{{MODEL_INFO}}
+This proxy uses your API credits:
+- **xAI/Grok**: Monitor usage at https://console.x.ai/
+- **Anthropic**: Standard Claude API pricing applies
 
-# Your custom instructions here...
+## 🔍 Debugging
 
-{{MCP_INSTRUCTIONS}}
-```
+- Check `unified_proxy.log` for request routing
+- Check `logs/requests/` for detailed request/response data
+- Use `ENABLE_FULL_LOGGING=false` to disable detailed logging
 
-## Troubleshooting
+## 🚧 Known Limitations
 
-### "Connection refused" error
-- Make sure the proxy is running (`python grok_proxy_openai.py`)
-- Check that port 8000 is not in use by another process
+- Some Claude-specific features may not work with Grok
+- Streaming responses require careful handling
+- Tool calling behavior may vary between backends
 
-### "XAI_API_KEY environment variable is not set!"
-- Set your xAI API key: `export XAI_API_KEY="your-key"`
+## 🤝 Contributing
 
-### "Argument not supported: cache_control"
-- This is already handled by the proxy, but if you see other unsupported parameters, add them to the removal list in `proxy_messages()`
+This is a weekend experiment born from late-night hacking and 90's electronic music. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full vibe.
 
-### Rate limits or API errors
-- Check your xAI account limits at https://console.x.ai/
-- The proxy passes through all xAI error messages for debugging
+## 📜 License
 
-## Security Notes
+MIT - See [LICENSE](LICENSE)
 
-- **Local use only**: The proxy runs without authentication. Don't expose port 8000 publicly.
-- **API key security**: Your xAI API key is only stored in the environment variable, never logged.
-- **Debug mode**: Disable `debug=True` in production for security.
+## 🐬 Why "Dolphin"?
 
-## Costs
+Named in honor of Eric Hartford's Dolphin models - the uncensored LLMs that championed user agency and freedom. This proxy continues that philosophy: your AI, your rules.
 
-This uses your xAI API credits. Monitor usage at https://console.x.ai/
+---
 
-## Contributing
-
-Feel free to submit issues or PRs for:
-- Additional model mappings
-- Better error handling
-- Support for more Anthropic API endpoints
-- Performance improvements
+*Built with ❤️ and a healthy disrespect for unnecessary restrictions*
