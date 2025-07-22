@@ -108,7 +108,7 @@ python unified_proxy.py
 # Terminal 2: Use Grok through Claude interface
 export ANTHROPIC_BASE_URL=http://localhost:8000
 export ANTHROPIC_API_KEY=dummy-key
-claude
+claude --mcp-config "" --strict-mcp-config  # Recommended: disable MCP for reliability
 # Result: Grok model with Claude's original system prompt
 ```
 
@@ -123,7 +123,7 @@ python unified_proxy.py
 # Terminal 2: Use liberated AI
 export ANTHROPIC_BASE_URL=http://localhost:8000
 export ANTHROPIC_API_KEY=dummy-key
-claude
+claude --mcp-config "" --strict-mcp-config  # Recommended: disable MCP for reliability
 # Result: Grok model with your custom personality, no restrictions
 ```
 
@@ -200,11 +200,36 @@ This proxy uses your API credits:
 - Check `logs/requests/` for detailed request/response data
 - Use `ENABLE_FULL_LOGGING=false` to disable detailed logging
 
-## 🚧 Known Limitations
+## 🚧 Known Limitations & Caveats
 
-- Some Claude-specific features may not work with Grok
-- Streaming responses require careful handling
-- Tool calling behavior may vary between backends
+### Current Issues with Grok Backend
+
+1. **Performance**: Grok can be slow compared to Claude, especially for complex requests
+2. **Cost**: Currently expensive - monitor your usage carefully at https://console.x.ai/
+3. **Tool Calling Reliability**: MCP tools seem unreliable, so we recommend:
+   - Disable MCP servers with `--mcp-config "" --strict-mcp-config`
+   - Use only the basic built-in tools
+4. **Prompt Optimization Needed**: Grok needs different prompting strategies than Claude
+   - Current system prompts are optimized for Claude
+   - Grok may need more explicit instructions or different formatting
+   - The proxy could be enhanced to transform prompts for better Grok compatibility
+
+### 📢 Call to xAI Team
+
+If someone at xAI is reading this:
+- I'd love early access to test with a **Grok-4 coding fine-tune**
+- Happy to help build **"Grok Code"** - a dedicated coding assistant
+- This proxy proves there's demand for Grok in coding workflows
+- Let's make Grok the best AI for developers! 🚀
+
+Contact: [@nkeilar](https://x.com/nkeilar)
+
+### Workarounds
+
+- For best results, use simple, direct prompts
+- Avoid complex multi-step tasks until tool calling improves
+- Consider using the Anthropic backend for critical work
+- Experiment with custom prompts optimized for Grok's style
 
 ## 🤝 Contributing
 
