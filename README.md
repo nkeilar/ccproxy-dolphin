@@ -50,38 +50,73 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Basic Usage - Grok Backend
+### Usage Scenarios
 
+| Scenario | Backend | Custom Prompt | Result |
+|----------|---------|---------------|---------|
+| **1. Anthropic Pass-through** | `anthropic` | `false` | Original Claude, no modifications |
+| **2. Anthropic Custom** | `anthropic` | `true` | Claude API with your system prompt |
+| **3. Grok Pass-through** | `grok` | `false` | Grok with Claude's personality |
+| **4. Grok Liberation** 🐬 | `grok` | `true` | Grok with custom prompt, no restrictions |
+
+#### 1️⃣ **Anthropic Pass-through** (Original Claude, No Modifications)
 ```bash
-# Terminal 1: Start the proxy
-export XAI_API_KEY="your-xai-api-key"
-python unified_proxy.py  # or grok_proxy_openai.py for Grok-only version
-
-# Terminal 2: Use with Claude Code
-export ANTHROPIC_BASE_URL=http://localhost:8000
-export ANTHROPIC_API_KEY=dummy-key  # Can be anything, proxy uses XAI_API_KEY
-claude
-```
-
-### Advanced Usage - System Prompt Override
-
-```bash
-# Enable custom system prompts
-export USE_CUSTOM_PROMPT=true
-export BACKEND=grok  # or 'anthropic'
-python unified_proxy.py
-
-# Now Claude will use your custom personality!
-```
-
-### Using Original Claude with Modified Prompts
-
-```bash
-# Use Anthropic backend with custom prompts
+# Terminal 1: Start proxy in pass-through mode
 export BACKEND=anthropic
-export ANTHROPIC_API_KEY="your-anthropic-key"
-export USE_CUSTOM_PROMPT=true
+export ANTHROPIC_API_KEY="your-anthropic-api-key"
+export USE_CUSTOM_PROMPT=false  # No prompt modifications
 python unified_proxy.py
+
+# Terminal 2: Use Claude as normal
+export ANTHROPIC_BASE_URL=http://localhost:8000
+export ANTHROPIC_API_KEY=dummy-key
+claude
+# Result: Original Claude with all default behaviors
+```
+
+#### 2️⃣ **Anthropic with Custom Prompts** (Claude with Your Personality)
+```bash
+# Terminal 1: Start proxy with custom prompts
+export BACKEND=anthropic
+export ANTHROPIC_API_KEY="your-anthropic-api-key"
+export USE_CUSTOM_PROMPT=true  # Enable prompt override
+python unified_proxy.py
+
+# Terminal 2: Use modified Claude
+export ANTHROPIC_BASE_URL=http://localhost:8000
+export ANTHROPIC_API_KEY=dummy-key
+claude
+# Result: Claude API with your custom system prompt
+```
+
+#### 3️⃣ **Grok Pass-through** (Use Grok, Keep Claude's Personality)
+```bash
+# Terminal 1: Start proxy with Grok backend
+export BACKEND=grok
+export XAI_API_KEY="your-xai-api-key"
+export USE_CUSTOM_PROMPT=false  # Keep Claude's system prompt
+python unified_proxy.py
+
+# Terminal 2: Use Grok through Claude interface
+export ANTHROPIC_BASE_URL=http://localhost:8000
+export ANTHROPIC_API_KEY=dummy-key
+claude
+# Result: Grok model with Claude's original system prompt
+```
+
+#### 4️⃣ **Grok with Custom Prompts** (Full Liberation Mode 🐬)
+```bash
+# Terminal 1: Start proxy with everything unlocked
+export BACKEND=grok
+export XAI_API_KEY="your-xai-api-key"
+export USE_CUSTOM_PROMPT=true  # Override system prompt
+python unified_proxy.py
+
+# Terminal 2: Use liberated AI
+export ANTHROPIC_BASE_URL=http://localhost:8000
+export ANTHROPIC_API_KEY=dummy-key
+claude
+# Result: Grok model with your custom personality, no restrictions
 ```
 
 ## 🎛️ Configuration Options
