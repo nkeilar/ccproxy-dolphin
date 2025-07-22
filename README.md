@@ -241,6 +241,8 @@ MIT - See [LICENSE](LICENSE)
 
 ## 📚 Responsible Use
 
+**Disclaimer**: This is a personal project created for research and experimentation. It does not represent the views or positions of Anthropic, xAI, or any other companies. Use at your own discretion.
+
 ccproxy-dolphin is designed as a professional developer productivity tool. While it enables system prompt customization, users should:
 
 - **Respect API Provider Terms**: Ensure your usage complies with both Anthropic's and xAI's terms of service
